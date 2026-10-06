@@ -1,0 +1,27 @@
+# Local secrets — never commit real tokens or credentials.
+pia/.env
+
+# Local Docker bind-mount data (named volumes live in Docker, but any
+# future host data dirs must stay out of git).
+data/
+
+# Redundancia del entorno de ejecucion y los secretos de Node-RED: el archivo «pia/nodered/.gitignore» es la
+# fuente de referencia, pero estos patrones raíz mantienen los secretos en el equipo local incluso si el
+# archivo anidado se elimina o se mueve.
+**/node_modules/ 
+**/.npm/ # Cache de node
+**/flows_cred.json # credenciales
+**/.flows*.backup
+**/.config.nodes.json*
+**/.config.runtime.json*
+*.backup
+
+# Logs and OS noise.
+*.log
+.DS_Store
+
+# La plantilla debe seguir siendo objeto de seguimiento aunque **/.env se amplíe.
+!pia/.env.example
+
+# Esta carpeta, es una posibilidad de iniciarlizar un grafico en granafana, no quiero subir esto todavia
+pia/grafana

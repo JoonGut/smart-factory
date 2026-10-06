@@ -1,0 +1,8 @@
+# Directorio de ejecución de Node-RED (montado como /data). Realiza un seguimiento de los flujos y del
+# manifiesto de dependencias para que los clones nuevos reproduzcan los nodos; todo lo demás que escribe Node-RED
+# (configuración, contexto, nodos instalados, credenciales) permanece en el equipo local.
+*
+!.gitignore
+!flows.json
+!package.json
+!package-lock.json

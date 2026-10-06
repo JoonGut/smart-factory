@@ -1,0 +1,128 @@
+[
+    {
+        "type": "tab",
+        "label": "persist-probe",
+        "id": "6207c807b4f4d29f"
+    },
+    {
+        "id": "probe1",
+        "type": "comment",
+        "name": "persist-probe",
+        "z": "6207c807b4f4d29f"
+    },
+    {
+        "type": "tab",
+        "label": "influx-probe",
+        "id": "f676d98a0da1157f"
+    },
+    {
+        "id": "cfg1",
+        "type": "influxdb",
+        "influxdbVersion": "2.0",
+        "url": "$(INFLUXDB_URL)",
+        "org": "$(INFLUXDB_ORG)",
+        "z": "f676d98a0da1157f"
+    },
+    {
+        "id": "injmir",
+        "type": "inject",
+        "name": "write-mir",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "measurement",
+                "v": "tour",
+                "vt": "str"
+            }
+        ],
+        "payload": "[[{\"battery_pct\": 87, \"progress\": 0.42}, {\"robot_id\": \"mir_01\"}]]",
+        "payloadType": "json",
+        "wires": [
+            [
+                "outmir"
+            ]
+        ],
+        "z": "f676d98a0da1157f"
+    },
+    {
+        "id": "injprt",
+        "type": "inject",
+        "name": "write-prt",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "measurement",
+                "v": "print_job",
+                "vt": "str"
+            }
+        ],
+        "payload": "[[{\"nozzle_temp\": 210, \"progress_pct\": 35}, {\"robot_id\": \"printer_01\"}]]",
+        "payloadType": "json",
+        "wires": [
+            [
+                "outprt"
+            ]
+        ],
+        "z": "f676d98a0da1157f"
+    },
+    {
+        "id": "injdob",
+        "type": "inject",
+        "name": "write-dob",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "measurement",
+                "v": "position",
+                "vt": "str"
+            }
+        ],
+        "payload": "[[{\"x\": 12.5, \"y\": 7.1, \"z\": 3.0}, {\"robot_id\": \"dobot_01\"}]]",
+        "payloadType": "json",
+        "wires": [
+            [
+                "outdob"
+            ]
+        ],
+        "z": "f676d98a0da1157f"
+    },
+    {
+        "id": "outmir",
+        "type": "influxdb out",
+        "name": "to-$(INFLUXDB_BUCKET",
+        "influxdb": "cfg1",
+        "measurement": "tour",
+        "precisionV18FluxV20": "ms",
+        "org": "$(INFLUXDB_ORG)",
+        "bucket": "$(INFLUXDB_BUCKET_MIR)",
+        "z": "f676d98a0da1157f"
+    },
+    {
+        "id": "outprt",
+        "type": "influxdb out",
+        "name": "to-$(INFLUXDB_BUCKET",
+        "influxdb": "cfg1",
+        "measurement": "print_job",
+        "precisionV18FluxV20": "ms",
+        "org": "$(INFLUXDB_ORG)",
+        "bucket": "$(INFLUXDB_BUCKET_PRINTER)",
+        "z": "f676d98a0da1157f"
+    },
+    {
+        "id": "outdob",
+        "type": "influxdb out",
+        "name": "to-$(INFLUXDB_BUCKET",
+        "influxdb": "cfg1",
+        "measurement": "position",
+        "precisionV18FluxV20": "ms",
+        "org": "$(INFLUXDB_ORG)",
+        "bucket": "$(INFLUXDB_BUCKET_DOBOT)",
+        "z": "f676d98a0da1157f"
+    }
+]
