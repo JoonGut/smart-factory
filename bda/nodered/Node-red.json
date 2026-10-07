@@ -1,0 +1,900 @@
+[
+    {
+        "id": "518519e57122505a",
+        "type": "tab",
+        "label": "Flujo 1",
+        "disabled": true,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "mir_multi_tab",
+        "type": "tab",
+        "label": "MiR multi",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "10f61ac561ee48b8",
+        "type": "influxdb",
+        "hostname": "127.0.0.1",
+        "port": 8086,
+        "protocol": "http",
+        "database": "database",
+        "name": "temperaturas-nodered",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "2.0",
+        "url": "http://localhost:8086",
+        "timeout": "5",
+        "rejectUnauthorized": true
+    },
+    {
+        "id": "c5da08d9561345b2",
+        "type": "influxdb",
+        "hostname": "127.0.0.1",
+        "port": 8086,
+        "protocol": "http",
+        "database": "database",
+        "name": "InfluxDB local",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "2.0",
+        "url": "http://localhost:8086",
+        "timeout": 10,
+        "rejectUnauthorized": true
+    },
+    {
+        "id": "cc6561357f5f1a8e",
+        "type": "inject",
+        "z": "518519e57122505a",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 160,
+        "wires": [
+            [
+                "5b908ea4884424d3"
+            ]
+        ]
+    },
+    {
+        "id": "5b908ea4884424d3",
+        "type": "function",
+        "z": "518519e57122505a",
+        "name": "function 1",
+        "func": "let t1 = context.get('t1') ?? 10;\nlet t2 = context.get('t2') ?? 30;\nt1 = Math.min(15, Math.max(5, t1 + (Math.random() - 0.5)));\nt2 = Math.min(40, Math.max(20, t2 + (Math.random() - 0.5)));\ncontext.set('t1', t1);\ncontext.set('t2', t2);\nmsg.payload = { temp1: Math.round(t1 * 100) / 100, temp2: Math.round(t2 * 100) / 100 };\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 160,
+        "wires": [
+            [
+                "ad40f058cf5d09ed",
+                "13d0da928a297372"
+            ]
+        ]
+    },
+    {
+        "id": "ad40f058cf5d09ed",
+        "type": "debug",
+        "z": "518519e57122505a",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "13d0da928a297372",
+        "type": "influxdb out",
+        "z": "518519e57122505a",
+        "influxdb": "10f61ac561ee48b8",
+        "name": "serverlocal",
+        "measurement": "temperatura",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "somorrostro",
+        "bucket": "temperaturas_tarea_3-4-5",
+        "x": 570,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "161ede828dd7ab20",
+        "type": "inject",
+        "z": "518519e57122505a",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 190,
+        "y": 360,
+        "wires": [
+            [
+                "3e98882c7f928e65"
+            ]
+        ]
+    },
+    {
+        "id": "3e98882c7f928e65",
+        "type": "function",
+        "z": "518519e57122505a",
+        "name": "Entero",
+        "func": "msg.payload = { entero: Math.floor(Math.random() * 10) + 1 };\nreturn msg;\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 360,
+        "wires": [
+            [
+                "e7efb96c6b8915b6",
+                "9d088efdda1df993"
+            ]
+        ]
+    },
+    {
+        "id": "e7efb96c6b8915b6",
+        "type": "debug",
+        "z": "518519e57122505a",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 550,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "9d088efdda1df993",
+        "type": "influxdb out",
+        "z": "518519e57122505a",
+        "influxdb": "10f61ac561ee48b8",
+        "name": "serverlocal",
+        "measurement": "entero",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "somorrostro",
+        "bucket": "temperaturas_tarea_3-4-5",
+        "x": 570,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "c5cf1c2f5ab08340",
+        "type": "inject",
+        "z": "518519e57122505a",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 580,
+        "wires": [
+            [
+                "23d55606d303929d"
+            ]
+        ]
+    },
+    {
+        "id": "23d55606d303929d",
+        "type": "function",
+        "z": "518519e57122505a",
+        "name": "Bit",
+        "func": "msg.payload = { bit: Math.random() < 0.5 };\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 580,
+        "wires": [
+            [
+                "a7ab1b10a59ae101",
+                "45aef1fff29e45b7"
+            ]
+        ]
+    },
+    {
+        "id": "a7ab1b10a59ae101",
+        "type": "debug",
+        "z": "518519e57122505a",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "45aef1fff29e45b7",
+        "type": "influxdb out",
+        "z": "518519e57122505a",
+        "influxdb": "10f61ac561ee48b8",
+        "name": "serverlocal",
+        "measurement": "bit",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "somorrostro",
+        "bucket": "temperaturas_tarea_3-4-5",
+        "x": 570,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "2bdffe1e0d3ab012",
+        "type": "inject",
+        "z": "518519e57122505a",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 780,
+        "wires": [
+            [
+                "ea160efdc505c18f"
+            ]
+        ]
+    },
+    {
+        "id": "ea160efdc505c18f",
+        "type": "function",
+        "z": "518519e57122505a",
+        "name": "Palabra",
+        "func": "const palabras = [\"rojo\", \"verde\", \"azul\", \"amarillo\"];\nmsg.payload = { palabra: palabras[Math.floor(Math.random() * palabras.length)] }; \nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 780,
+        "wires": [
+            [
+                "aab0d707fdd3f8ce",
+                "76fde99873cf1683"
+            ]
+        ]
+    },
+    {
+        "id": "aab0d707fdd3f8ce",
+        "type": "debug",
+        "z": "518519e57122505a",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "76fde99873cf1683",
+        "type": "influxdb out",
+        "z": "518519e57122505a",
+        "influxdb": "10f61ac561ee48b8",
+        "name": "serverlocal",
+        "measurement": "palabra",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "somorrostro",
+        "bucket": "temperaturas_tarea_3-4-5",
+        "x": 570,
+        "y": 900,
+        "wires": []
+    },
+    {
+        "id": "iss_inj",
+        "type": "inject",
+        "z": "518519e57122505a",
+        "name": "cada 10s",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 150,
+        "y": 980,
+        "wires": [
+            [
+                "iss_http"
+            ]
+        ]
+    },
+    {
+        "id": "iss_http",
+        "type": "http request",
+        "z": "518519e57122505a",
+        "name": "ISS",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "http://api.open-notify.org/iss-now.json",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 310,
+        "y": 980,
+        "wires": [
+            [
+                "iss_fn"
+            ]
+        ]
+    },
+    {
+        "id": "iss_fn",
+        "type": "function",
+        "z": "518519e57122505a",
+        "name": "ISS lat/lon",
+        "func": "const p = msg.payload.iss_position;\nmsg.payload = { latitude: parseFloat(p.latitude), longitude: parseFloat(p.longitude) };\nreturn msg;\n\n\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 980,
+        "wires": [
+            [
+                "iss_dbg",
+                "db3a5ac8715b615c"
+            ]
+        ]
+    },
+    {
+        "id": "iss_dbg",
+        "type": "debug",
+        "z": "518519e57122505a",
+        "name": "debug ISS",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 630,
+        "y": 980,
+        "wires": []
+    },
+    {
+        "id": "api_inj",
+        "type": "inject",
+        "z": "518519e57122505a",
+        "name": "cada 60s",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 150,
+        "y": 1080,
+        "wires": [
+            [
+                "api_http"
+            ]
+        ]
+    },
+    {
+        "id": "api_http",
+        "type": "http request",
+        "z": "518519e57122505a",
+        "name": "Open-Meteo",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://api.open-meteo.com/v1/forecast?latitude=40.42&longitude=-3.70&current=temperature_2m,wind_speed_10m",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 310,
+        "y": 1080,
+        "wires": [
+            [
+                "api_fn"
+            ]
+        ]
+    },
+    {
+        "id": "api_fn",
+        "type": "function",
+        "z": "518519e57122505a",
+        "name": "Tiempo",
+        "func": "const c = msg.payload.current;\nmsg.payload = { temperatura: c.temperature_2m, viento: c.wind_speed_10m };\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 1080,
+        "wires": [
+            [
+                "api_dbg",
+                "92d38627296b5de1"
+            ]
+        ]
+    },
+    {
+        "id": "api_dbg",
+        "type": "debug",
+        "z": "518519e57122505a",
+        "name": "debug API",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 630,
+        "y": 1080,
+        "wires": []
+    },
+    {
+        "id": "loc_inj",
+        "type": "inject",
+        "z": "518519e57122505a",
+        "name": "cada 5s",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 150,
+        "y": 1180,
+        "wires": [
+            [
+                "loc_fn"
+            ]
+        ]
+    },
+    {
+        "id": "loc_fn",
+        "type": "function",
+        "z": "518519e57122505a",
+        "name": "Planta location",
+        "func": "let t = context.get('t') || 24;\nt += (Math.random() - 0.5) * 0.6;\nt = Math.min(30, Math.max(18, t));\ncontext.set('t', t);\nconst locs = ['almacén', 'oficina', 'taller'];\nconst loc = locs[Math.floor(Math.random() * locs.length)];\nmsg.payload = [{ temperatura: Math.round(t * 100) / 100 }, { location: loc }];\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 1180,
+        "wires": [
+            [
+                "loc_dbg",
+                "bf743b903e8ae443"
+            ]
+        ]
+    },
+    {
+        "id": "loc_dbg",
+        "type": "debug",
+        "z": "518519e57122505a",
+        "name": "debug planta",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 630,
+        "y": 1180,
+        "wires": []
+    },
+    {
+        "id": "db3a5ac8715b615c",
+        "type": "influxdb out",
+        "z": "518519e57122505a",
+        "influxdb": "10f61ac561ee48b8",
+        "name": "servelocal",
+        "measurement": "iss",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "somorrostro",
+        "bucket": "temperaturas_tarea_3-4-5",
+        "x": 620,
+        "y": 1020,
+        "wires": []
+    },
+    {
+        "id": "92d38627296b5de1",
+        "type": "influxdb out",
+        "z": "518519e57122505a",
+        "influxdb": "10f61ac561ee48b8",
+        "name": "servelocal",
+        "measurement": "tiempo_api",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "somorrostro",
+        "bucket": "temperaturas_tarea_3-4-5",
+        "x": 620,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "bf743b903e8ae443",
+        "type": "influxdb out",
+        "z": "518519e57122505a",
+        "influxdb": "10f61ac561ee48b8",
+        "name": "planta",
+        "measurement": "planta",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "somorrostro",
+        "bucket": "temperaturas_tarea_3-4-5",
+        "x": 630,
+        "y": 1240,
+        "wires": []
+    },
+    {
+        "id": "i_status",
+        "type": "inject",
+        "z": "mir_multi_tab",
+        "name": "status (10 s)",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1",
+        "topic": "status",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 60,
+        "wires": [
+            [
+                "f_prep"
+            ]
+        ]
+    },
+    {
+        "id": "i_queue",
+        "type": "inject",
+        "z": "mir_multi_tab",
+        "name": "mission_queue (10 s)",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "2",
+        "topic": "mission_queue",
+        "payload": "",
+        "payloadType": "date",
+        "x": 160,
+        "y": 120,
+        "wires": [
+            [
+                "f_prep"
+            ]
+        ]
+    },
+    {
+        "id": "i_missions",
+        "type": "inject",
+        "z": "mir_multi_tab",
+        "name": "missions (60 s)",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "3",
+        "topic": "missions",
+        "payload": "",
+        "payloadType": "date",
+        "x": 150,
+        "y": 180,
+        "wires": [
+            [
+                "f_prep"
+            ]
+        ]
+    },
+    {
+        "id": "i_positions",
+        "type": "inject",
+        "z": "mir_multi_tab",
+        "name": "positions (60 s)",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "4",
+        "topic": "positions",
+        "payload": "",
+        "payloadType": "date",
+        "x": 150,
+        "y": 240,
+        "wires": [
+            [
+                "f_prep"
+            ]
+        ]
+    },
+    {
+        "id": "f_prep",
+        "type": "function",
+        "z": "mir_multi_tab",
+        "name": "preparar petición",
+        "func": "// Un mensaje por robot MiR para pedirle datos a la API.\n// Las IPs se ven aquí; el token (secreto) viene de una variable de entorno.\nconst robots = [\n    { id: 'mir1', host: '192.168.15.5', token: env.get('MIR1_TOKEN') },\n    { id: 'mir2', host: '192.168.15.15', token: env.get('MIR2_TOKEN') }\n];\n\n// guartadamos las peticiones por robot\nconst salida = [];\nfor (const r of robots) {\n    // Si falta el token, se salta ese robot\n    if (!r.token) continue;   // guardamos de que robot es\n    salida.push({\n        topic: msg.topic,        // endpoint a pedir (status, missions...)\n        robot_id: r.id,          // sirve luego como etiqueta en InfluxDB\n        url: 'http://' + r.host + '/api/v2.0.0/' + msg.topic,\n        headers: {\n            'Authorization': 'Basic ' + r.token,\n            'Accept-Language': 'en_US'\n        }\n    });\n}\n// Un mensaje por cada robot\nreturn [salida];\n\n\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 150,
+        "wires": [
+            [
+                "h_get"
+            ]
+        ]
+    },
+    {
+        "id": "h_get",
+        "type": "http request",
+        "z": "mir_multi_tab",
+        "name": "GET MiR",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 600,
+        "y": 150,
+        "wires": [
+            [
+                "d_out",
+                "ac7f979eaee47d56"
+            ]
+        ]
+    },
+    {
+        "id": "d_out",
+        "type": "debug",
+        "z": "mir_multi_tab",
+        "name": "respuesta MiR",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 800,
+        "y": 150,
+        "wires": []
+    },
+    {
+        "id": "ac7f979eaee47d56",
+        "type": "function",
+        "z": "mir_multi_tab",
+        "name": "status -->influx ",
+        "func": "// Solo procesamos las respuestas de \"status\"\nif (msg.topic !== 'status') return null;\n\n\n// s = JSON que devolvió el robot\nconst s = msg.payload;\nif (!s || typeof s !== 'object') return null;\n\n\n// Devuelve el valor si es número, si no null (InfluxDB fija el tipo del campo)\nconst n = (v) => (typeof v === 'number' ? v : null);\n\n\n// Valores numéricos a guardar (position y velocity son objetos anidados)\nconst candidatos = {\n    pos_x: n(s.position && s.position.x),\n    pos_y: n(s.position && s.position.y),\n    orientation: n(s.position && s.position.orientation),\n    vel_linear: n(s.velocity && s.velocity.linear),\n    vel_angular: n(s.velocity && s.velocity.angular),\n    battery_percentage: n(s.battery_percentage),\n    battery_time_remaining: n(s.battery_time_remaining),\n    moved: n(s.moved),\n    distance_to_next_target: n(s.distance_to_next_target),\n    uptime: n(s.uptime),\n    state_id: n(s.state_id),\n    mode_id: n(s.mode_id)\n};\n\n\n// Campos: nos quedamos solo con los que son número\nconst campos = {};\nfor (const k in candidatos) {\n    if (candidatos[k] !== null) campos[k] = candidatos[k];\n}\n\n\n// Otros campos: nº de errores, booleanos y texto de la misión\ncampos.errors_count = Array.isArray(s.errors) ? s.errors.length : 0;\ncampos.safety_system_muted = !!s.safety_system_muted;\ncampos.joystick_low_speed_mode = !!s.joystick_low_speed_mode_enabled;\ncampos.unloaded_map_changes = !!s.unloaded_map_changes;\ncampos.mission_text = String(s.mission_text || '');\n\n\n// Tags: categorías con pocos valores (nunca batería ni posición)\nconst tags = {\n    robot: String(msg.robot_id || 'desconocido'),   // mir1 o mir2\n    robot_name: String(s.robot_name || 'desconocido'),\n    robot_model: String(s.robot_model || 'desconocido'),\n    state_text: String(s.state_text || 'desconocido'),\n    mode_text: String(s.mode_text || 'desconocido'),\n    mode_key_state: String(s.mode_key_state || 'desconocido')\n};\n\n\n// Salida para influxdb out: [campos, tags]\nmsg.measurement = 'mir_status';\nmsg.payload = [campos, tags];\nreturn msg;\n\n\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 800,
+        "y": 260,
+        "wires": [
+            [
+                "21875fcf26e2bdf1"
+            ]
+        ]
+    },
+    {
+        "id": "21875fcf26e2bdf1",
+        "type": "influxdb out",
+        "z": "mir_multi_tab",
+        "influxdb": "c5da08d9561345b2",
+        "name": "mir status -->influx",
+        "measurement": "",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "somorrostro",
+        "bucket": "mir",
+        "x": 1030,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "8e91d734ea8d4f73",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-contrib-influxdb": "0.7.0"
+        }
+    }
+]
