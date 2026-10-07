@@ -12,7 +12,7 @@ name: smart-factory
 services:
   influxdb:
     image: influxdb:2.9.1
-    container_name: smart-factory-influxdb
+    container_name: smartek-influxdb
     restart: unless-stopped
     ports:
       - "${INFLUXDB_PORT:-8086}:8086"
@@ -23,13 +23,13 @@ services:
       DOCKER_INFLUXDB_INIT_PASSWORD: "${INFLUXDB_INIT_PASSWORD}"
       DOCKER_INFLUXDB_INIT_ORG: "${INFLUXDB_ORG}"
       DOCKER_INFLUXDB_INIT_BUCKET: "${INFLUXDB_BUCKET_MIR}"
-      DOCKER_INFLUXDB_INIT_RETENTION: "${INFLUXDB_RETENTION}"
+      #DOCKER_INFLUXDB_INIT_RETENTION: "${INFLUXDB_RETENTION}"
       DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: "${INFLUXDB_TOKEN}"
 
       INFLUXDB_ORG: "${INFLUXDB_ORG}"
       INFLUXDB_BUCKET_PRINTER: "${INFLUXDB_BUCKET_PRINTER}"
       INFLUXDB_BUCKET_DOBOT: "${INFLUXDB_BUCKET_DOBOT}"
-      INFLUXDB_RETENTION: "${INFLUXDB_RETENTION}"
+      #INFLUXDB_RETENTION: "${INFLUXDB_RETENTION}"
 
     volumes:
       - influxdb2-data:/var/lib/influxdb2
@@ -47,7 +47,7 @@ services:
 
   nodered:
     image: nodered/node-red:latest
-    container_name: smart-factory-nodered
+    container_name: smartek-nodered
     restart: unless-stopped
     ports:
       - "${NODE_RED_PORT:-1880}:1880"
@@ -72,7 +72,7 @@ services:
 
   grafana:
     image: grafana/grafana:13.2.2
-    container_name: smart-factory-grafana
+    container_name: smartek-grafana
     restart: unless-stopped
     ports:
       - "${GRAFANA_PORT:-3000}:3000"
