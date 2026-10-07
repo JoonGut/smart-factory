@@ -61,7 +61,7 @@ services:
       INFLUXDB_TOKEN: "${INFLUXDB_TOKEN:?INFLUXDB_TOKEN is required}"
 
     volumes:
-      - ./nodered:/data
+      - ../bda/nodered:/data
 
     networks:
       - factory-net
@@ -86,8 +86,8 @@ services:
 
     volumes:
       - grafana-data:/var/lib/grafana
-      - ./grafana/provisioning:/etc/grafana/provisioning
-      - ./grafana/dashboards:/var/lib/grafana/dashboards
+      - ../bda/grafana/provisioning:/etc/grafana/provisioning
+      - ../bda/grafana/dashboards:/var/lib/grafana/dashboards
 
     networks:
       - factory-net

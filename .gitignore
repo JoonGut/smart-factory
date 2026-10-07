@@ -24,4 +24,4 @@ data/
 !pia/.env.example
 
 # Esta carpeta, es una posibilidad de iniciarlizar un grafico en granafana, no quiero subir esto todavia
-pia/grafana
+#pia/grafana
