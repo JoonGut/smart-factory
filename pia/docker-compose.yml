@@ -59,6 +59,8 @@ services:
       INFLUXDB_BUCKET_PRINTER: "${INFLUXDB_BUCKET_PRINTER}"
       INFLUXDB_BUCKET_DOBOT: "${INFLUXDB_BUCKET_DOBOT}"
       INFLUXDB_TOKEN: "${INFLUXDB_TOKEN:?INFLUXDB_TOKEN is required}"
+      MIR1_TOKEN: "${MIR1_TOKEN}"
+      MIR2_TOKEN: "${MIR2_TOKEN}"
 
     volumes:
       - ../bda/nodered:/data
