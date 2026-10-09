@@ -1,0 +1,52 @@
+{
+  "uid": "verify-buckets",
+  "title": "Verify buckets",
+  "tags": ["smart-factory", "verification"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "panels": [
+    {
+      "id": 1,
+      "title": "MiR battery",
+      "type": "timeseries",
+      "datasource": {"type": "influxdb", "uid": "influxdb"},
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {"type": "influxdb", "uid": "influxdb"},
+          "query": "from(bucket: \"mir_robots\")\n  |> range(start: v.timeRangeStart, v.timeRangeStop)\n  |> filter(fn: (r) => r[\"robot_id\"] == \"mir_01\" and r[\"_field\"] == \"battery_pct\")"
+        }
+      ],
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+    },
+    {
+      "id": 2,
+      "title": "Printer nozzle temp",
+      "type": "timeseries",
+      "datasource": {"type": "influxdb", "uid": "influxdb"},
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {"type": "influxdb", "uid": "influxdb"},
+          "query": "from(bucket: \"3d_printers\")\n  |> range(start: v.timeRangeStart, v.timeRangeStop)\n  |> filter(fn: (r) => r[\"robot_id\"] == \"printer_01\" and r[\"_field\"] == \"nozzle_temp\")"
+        }
+      ],
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+    },
+    {
+      "id": 3,
+      "title": "Dobot X",
+      "type": "timeseries",
+      "datasource": {"type": "influxdb", "uid": "influxdb"},
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {"type": "influxdb", "uid": "influxdb"},
+          "query": "from(bucket: \"dobot\")\n  |> range(start: v.timeRangeStart, v.timeRangeStop)\n  |> filter(fn: (r) => r[\"robot_id\"] == \"dobot_01\" and r[\"_field\"] == \"x\")"
+        }
+      ],
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
+    }
+  ]
+}

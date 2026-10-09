@@ -1,0 +1,116 @@
+# Smart-factory monitoring stack.
+# Usage:
+#   cp .env.example .env
+#   docker compose up -d
+#
+# InfluxDB is initialized automatically on first boot:
+# - organization: smart-factory
+# - buckets: mir_robots, 3d_printers, dobot
+
+name: smart-factory
+
+services:
+  influxdb:
+    image: influxdb:2.9.1
+    container_name: smartek-influxdb
+    restart: unless-stopped
+    ports:
+      - "${INFLUXDB_PORT:-8086}:8086"
+
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: "${INFLUXDB_INIT_USERNAME}"
+      DOCKER_INFLUXDB_INIT_PASSWORD: "${INFLUXDB_INIT_PASSWORD}"
+      DOCKER_INFLUXDB_INIT_ORG: "${INFLUXDB_ORG}"
+      DOCKER_INFLUXDB_INIT_BUCKET: "${INFLUXDB_BUCKET_MIR}"
+      #DOCKER_INFLUXDB_INIT_RETENTION: "${INFLUXDB_RETENTION}"
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: "${INFLUXDB_TOKEN}"
+
+      INFLUXDB_ORG: "${INFLUXDB_ORG}"
+      INFLUXDB_BUCKET_PRINTER: "${INFLUXDB_BUCKET_PRINTER}"
+      INFLUXDB_BUCKET_DOBOT: "${INFLUXDB_BUCKET_DOBOT}"
+      #INFLUXDB_RETENTION: "${INFLUXDB_RETENTION}"
+
+    volumes:
+      - influxdb2-data:/var/lib/influxdb2
+      - ./influxdb/initdb.d:/docker-entrypoint-initdb.d
+
+    networks:
+      - factory-net
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  nodered:
+    image: nodered/node-red:latest
+    container_name: smartek-nodered
+    restart: unless-stopped
+    ports:
+      - "${NODE_RED_PORT:-1880}:1880"
+
+    environment:
+      INFLUXDB_URL: "${INFLUXDB_URL:-http://influxdb:8086}"
+      INFLUXDB_ORG: "${INFLUXDB_ORG}"
+      INFLUXDB_BUCKET_MIR: "${INFLUXDB_BUCKET_MIR}"
+      INFLUXDB_BUCKET_PRINTER: "${INFLUXDB_BUCKET_PRINTER}"
+      INFLUXDB_BUCKET_DOBOT: "${INFLUXDB_BUCKET_DOBOT}"
+      INFLUXDB_TOKEN: "${INFLUXDB_TOKEN}"
+      MIR1_TOKEN: "${MIR1_TOKEN}"
+      MIR2_TOKEN: "${MIR2_TOKEN}"
+
+    volumes:
+      - ../bda/nodered:/data
+
+    networks:
+      - factory-net
+
+    depends_on:
+      influxdb:
+        condition: service_healthy
+
+  grafana:
+    image: grafana/grafana:13.2.2
+    container_name: smartek-grafana
+    restart: unless-stopped
+    ports:
+      - "${GRAFANA_PORT:-3000}:3000"
+
+    environment:
+      GF_SECURITY_ADMIN_USER: "${GF_SECURITY_ADMIN_USER}"
+      GF_SECURITY_ADMIN_PASSWORD: "${GF_SECURITY_ADMIN_PASSWORD}"
+      INFLUXDB_URL: "${INFLUXDB_URL:-http://influxdb:8086}"
+      INFLUXDB_ORG: "${INFLUXDB_ORG}"
+      INFLUXDB_TOKEN: "${INFLUXDB_TOKEN}"
+
+      #Modificación de SMTP del grafana.ini
+      GF_SMTP_ENABLED: "${GF_SMTP_ENABLED}"
+      GF_SMTP_HOST: "${GF_SMTP_HOST}"
+      GF_SMTP_USER: "${GF_SMTP_USER}"
+      GF_SMTP_PASSWORD: "${GF_SMTP_PASSWORD}"
+      GF_SMTP_FROM_ADDRESS: "${GF_SMTP_FROM_ADDRESS}"
+      GF_SMTP_FROM_NAME: "${GF_SMTP_FROM_NAME}"
+      GF_SMTP_STARTTLS_POLICY: "${GF_SMTP_STARTTLS_POLICY}"
+
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ../bda/grafana/provisioning:/etc/grafana/provisioning
+      - ../bda/grafana/dashboards:/var/lib/grafana/dashboards
+
+    networks:
+      - factory-net
+
+    depends_on:
+      influxdb:
+        condition: service_healthy
+
+networks:
+  factory-net:
+    driver: bridge
+
+volumes:
+  influxdb2-data:
+  grafana-data:

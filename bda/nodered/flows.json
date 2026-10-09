@@ -1,0 +1,240 @@
+[
+    {
+        "id": "mir_multi_tab",
+        "type": "tab",
+        "label": "MiR multi",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "eebb2fcb761e45c1",
+        "type": "influxdb",
+        "hostname": "127.0.0.1",
+        "port": 8086,
+        "protocol": "http",
+        "database": "database",
+        "name": "",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "2.0",
+        "url": "http://192.168.101.241:8086",
+        "timeout": 10,
+        "rejectUnauthorized": true
+    },
+    {
+        "id": "i_status",
+        "type": "inject",
+        "z": "mir_multi_tab",
+        "name": "status (10 s)",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1",
+        "topic": "status",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 60,
+        "wires": [
+            [
+                "f_prep"
+            ]
+        ]
+    },
+    {
+        "id": "i_queue",
+        "type": "inject",
+        "z": "mir_multi_tab",
+        "name": "mission_queue (10 s)",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "2",
+        "topic": "mission_queue",
+        "payload": "",
+        "payloadType": "date",
+        "x": 160,
+        "y": 120,
+        "wires": [
+            [
+                "f_prep"
+            ]
+        ]
+    },
+    {
+        "id": "i_missions",
+        "type": "inject",
+        "z": "mir_multi_tab",
+        "name": "missions (60 s)",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "3",
+        "topic": "missions",
+        "payload": "",
+        "payloadType": "date",
+        "x": 150,
+        "y": 180,
+        "wires": [
+            [
+                "f_prep"
+            ]
+        ]
+    },
+    {
+        "id": "i_positions",
+        "type": "inject",
+        "z": "mir_multi_tab",
+        "name": "positions (60 s)",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "60",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "4",
+        "topic": "positions",
+        "payload": "",
+        "payloadType": "date",
+        "x": 150,
+        "y": 240,
+        "wires": [
+            [
+                "f_prep"
+            ]
+        ]
+    },
+    {
+        "id": "f_prep",
+        "type": "function",
+        "z": "mir_multi_tab",
+        "name": "preparar petición",
+        "func": "// Un mensaje por robot MiR para pedirle datos a la API.\n// Las IPs se ven aquí; el token (secreto) viene de una variable de entorno.\nconst robots = [\n    { id: 'mir1', host: '192.168.15.5', token: env.get('MIR1_TOKEN') },\n    { id: 'mir2', host: '192.168.15.15', token: env.get('MIR2_TOKEN') }\n];\n\n// guartadamos las peticiones por robot\nconst salida = [];\nfor (const r of robots) {\n    // Si falta el token, se salta ese robot\n    if (!r.token) continue;   // guardamos de que robot es\n    salida.push({\n        topic: msg.topic,        // endpoint a pedir (status, missions...)\n        robot_id: r.id,          // sirve luego como etiqueta en InfluxDB\n        url: 'http://' + r.host + '/api/v2.0.0/' + msg.topic,\n        headers: {\n            'Authorization': 'Basic ' + r.token,\n            'Accept-Language': 'en_US'\n        }\n    });\n}\n// Un mensaje por cada robot\nreturn [salida];\n\n\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 150,
+        "wires": [
+            [
+                "h_get"
+            ]
+        ]
+    },
+    {
+        "id": "h_get",
+        "type": "http request",
+        "z": "mir_multi_tab",
+        "name": "GET MiR",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 600,
+        "y": 150,
+        "wires": [
+            [
+                "d_out",
+                "ac7f979eaee47d56"
+            ]
+        ]
+    },
+    {
+        "id": "d_out",
+        "type": "debug",
+        "z": "mir_multi_tab",
+        "name": "respuesta MiR",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 800,
+        "y": 150,
+        "wires": []
+    },
+    {
+        "id": "ac7f979eaee47d56",
+        "type": "function",
+        "z": "mir_multi_tab",
+        "name": "status -->influx ",
+        "func": "// Solo procesamos las respuestas de \"status\"\nif (msg.topic !== 'status') return null;\n\n\n// s = JSON que devolvió el robot\nconst s = msg.payload;\nif (!s || typeof s !== 'object') return null;\n\n\n// Devuelve el valor si es número, si no null (InfluxDB fija el tipo del campo)\nconst n = (v) => (typeof v === 'number' ? v : null);\n\n\n// Valores numéricos a guardar (position y velocity son objetos anidados)\nconst candidatos = {\n    pos_x: n(s.position && s.position.x),\n    pos_y: n(s.position && s.position.y),\n    orientation: n(s.position && s.position.orientation),\n    vel_linear: n(s.velocity && s.velocity.linear),\n    vel_angular: n(s.velocity && s.velocity.angular),\n    battery_percentage: n(s.battery_percentage),\n    battery_time_remaining: n(s.battery_time_remaining),\n    moved: n(s.moved),\n    distance_to_next_target: n(s.distance_to_next_target),\n    uptime: n(s.uptime),\n    state_id: n(s.state_id),\n    mode_id: n(s.mode_id)\n};\n\n\n// Campos: nos quedamos solo con los que son número\nconst campos = {};\nfor (const k in candidatos) {\n    if (candidatos[k] !== null) campos[k] = candidatos[k];\n}\n\n\n// Otros campos: nº de errores, booleanos y texto de la misión\ncampos.errors_count = Array.isArray(s.errors) ? s.errors.length : 0;\ncampos.safety_system_muted = !!s.safety_system_muted;\ncampos.joystick_low_speed_mode = !!s.joystick_low_speed_mode_enabled;\ncampos.unloaded_map_changes = !!s.unloaded_map_changes;\ncampos.mission_text = String(s.mission_text || '');\n\n\n// Tags: categorías con pocos valores (nunca batería ni posición)\nconst tags = {\n    robot: String(msg.robot_id || 'desconocido'),   // mir1 o mir2\n    robot_name: String(s.robot_name || 'desconocido'),\n    robot_model: String(s.robot_model || 'desconocido'),\n    state_text: String(s.state_text || 'desconocido'),\n    mode_text: String(s.mode_text || 'desconocido'),\n    mode_key_state: String(s.mode_key_state || 'desconocido')\n};\n\n\n// Salida para influxdb out: [campos, tags]\nmsg.measurement = 'mir_status';\nmsg.payload = [campos, tags];\nreturn msg;\n\n\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 800,
+        "y": 260,
+        "wires": [
+            [
+                "21875fcf26e2bdf1"
+            ]
+        ]
+    },
+    {
+        "id": "21875fcf26e2bdf1",
+        "type": "influxdb out",
+        "z": "mir_multi_tab",
+        "influxdb": "eebb2fcb761e45c1",
+        "name": "mir status -->influx",
+        "measurement": "",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "smartek",
+        "bucket": "mir",
+        "x": 1030,
+        "y": 260,
+        "wires": []
+    }
+]

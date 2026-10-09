@@ -1,0 +1,19 @@
+# Fuente de datos unica de InfluxDB (Flux) para los tres buckets de robots.
+# Los valores proceden del entorno del servicio Grafana (vease pia/.env.example).
+# La seleccion del bucket se establece por panel: from(bucket: "mir_robots" | "3d_printers" | "dobot").
+apiVersion: 1
+
+datasources:
+  - name: InfluxDB
+    uid: influxdb
+    type: influxdb
+    access: proxy
+    url: $INFLUXDB_URL
+    isDefault: true
+    editable: true
+    jsonData:
+      version: Flux
+      organization: $INFLUXDB_ORG
+      defaultBucket: mir_robots
+    secureJsonData:
+      token: $INFLUXDB_TOKEN
